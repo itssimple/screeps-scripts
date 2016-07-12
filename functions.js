@@ -7,6 +7,8 @@ var upgrader  =    require('role.upgrader');
 var repairer =     require('role.repairer');
 var wallRepairer = require('role.wallRepairer');
 
+var taskPreparer = require('task.preparer');
+
 module.exports = {
     clearMemory: function() {
         for(let name in Memory.creeps) {
@@ -36,6 +38,9 @@ module.exports = {
                     break;
             }
         }
+    },
+    prepareTasks: function() {
+        taskPreparer.run();
     },
     createCreeps: function() {
         Memory.maxEnergy = 0;

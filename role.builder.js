@@ -18,7 +18,7 @@ module.exports = {
                     let err = c.build(target);
                     if(err == ERR_NOT_IN_RANGE) {
                         c.moveTo(target, {
-                            reusePath: 20
+                            reusePath: 10
                         });
                     } else if(err == OK) {
                         //console.log(c.name + ' (' + c.memory.role + ') building on a ' + target.structureType + ': (' + target.progress + ' / ' + target.progressTotal + ') ' + Math.round((target.progress / target.progressTotal) * 100, 2) + '%');

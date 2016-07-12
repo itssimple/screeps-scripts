@@ -9,7 +9,7 @@ module.exports = {
             if(target) {
                 if(c.repair(target) == ERR_NOT_IN_RANGE) {
                     c.moveTo(target, {
-                            reusePath: 20
+                            reusePath: 10
                         });
                 } else {
                     //console.log(c.name + ' (' + c.memory.role + ') repairing a ' + target.structureType + ': (' + target.hits + ' / ' + target.hitsMax + ') ' + Math.round((target.hits / target.hitsMax) * 100, 2) + '%');
