@@ -1,5 +1,6 @@
 require('prototype.spawn')();
 require('prototype.creep')();
+require('prototype.tower')();
 
 var harvester =    require('role.harvester');
 var builder   =    require('role.builder');
@@ -38,6 +39,17 @@ module.exports = {
                     break;
             }
         }
+        
+        for(let _room in Game.rooms) {
+            var towers = Game.rooms[_room].find(FIND_STRUCTURES, {
+                filter: (s) => s.structureType == STRUCTURE_TOWER
+            });
+            
+            for(let tower in towers) {
+                let t = towers[tower];
+                t.fireAtClosestEnemy();
+            }
+        }
     },
     prepareTasks: function() {
         taskPreparer.run();
@@ -53,28 +65,41 @@ module.exports = {
             spawn = Game.spawns[sp];
         }
         
+        let reachedMinHarvesters = false;
+        let reachedMinBuilders = false;
+        let reachedMinRepairers = false;
+        let reachedMinUpgraders = false;
+        let reachedMinWallRepairers = false;
+        
         let minUnitFormula = (300 / Memory.maxEnergy);
         
         let minHarvesters =    6 * minUnitFormula;
         if(minHarvesters < 3) {
             minHarvesters = 3;
+            reachedMinHarvesters = true;
         }
         let minUpgraders =     4  * minUnitFormula;
-        if(minUpgraders < 2) {
-            minUpgraders = 2;
+        if(minUpgraders < 1) {
+            minUpgraders = 1;
+            reachedMinUpgraders = true;
         }
         let minBuilders =      3  * minUnitFormula;
         if(minBuilders < 2) {
             minBuilders = 2;
+            reachedMinBuilders = true;
         }
         let minRepairers =     2  * minUnitFormula;
         if(minRepairers < 1) {
             minRepairers = 1;
+            reachedMinRepairers = true;
         }
         let minWallRepairers = 1  * minUnitFormula;
         if(minWallRepairers < 1) {
             minWallRepairers = 1;
+            reachedMinWallRepairers = true;
         }
+        
+        
         
         let currentHarvesters =    _.sum(Game.creeps, (c) => c.memory.role == 'harvester');
         let currentUpgraders =     _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
@@ -86,11 +111,11 @@ module.exports = {
         let latestTask = undefined;
         
         let parts = Math.floor(Memory.maxEnergy / 200);
-        
+        Memory.reachedMinUnits = false;
         if(spawn != undefined) {
             if(currentHarvesters < minHarvesters) {
                 latestCreep = spawn.createCustomCreep(Memory.maxEnergy, 'harvester', { working: false });
-                if(latestCreep == ERR_NOT_ENOUGH_ENERGY && currentHarvesters == 0) {
+                if(latestCreep == ERR_NOT_ENOUGH_ENERGY && currentHarvesters < Math.ceil(minHarvesters /2)) {
                     latestCreep = spawn.createCustomCreep(Memory.currentEnergy, 'harvester', { working: false });
                     parts = Math.floor(Memory.currentEnergy / 200);
                 }
@@ -107,6 +132,8 @@ module.exports = {
             } else if(currentWallRepairers < minWallRepairers) {
                 latestCreep = spawn.createCustomCreep(Memory.maxEnergy, 'wallRepairer', { working: false });
                 latestTask = 'wallRepairer';
+            } else {
+                Memory.reachedMinUnits = true;
             }
             
             if(latestCreep != undefined && !(latestCreep < 0)) {
