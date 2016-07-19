@@ -4,7 +4,20 @@ module.exports = {
     run: function(creep) {
         creep.fetchEnergy(function(c) {
             var target = undefined;
-            var sites = c.room.find(FIND_CONSTRUCTION_SITES);
+            var sites = undefined;
+            if (Memory.tasks.build != undefined && Memory.tasks.build.length > 0) {
+                if (c.memory.buildTask == undefined) { 
+                    c.memory.buildTask = Memory.tasks.build.shift();
+                }
+                let obj = Game.getObjectById(c.memory.buildTask);
+                if (obj) {
+                    sites = [obj];
+                } else {
+                    c.memory.buildTask = undefined;
+                }
+            } else {
+                sites = c.room.find(FIND_CONSTRUCTION_SITES);
+            }    
             for(let percent = 1.0; percent >= -0.001; percent -= 0.001) {
                 for(let site in sites) {
                     let cs = sites[site];

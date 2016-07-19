@@ -1,7 +1,7 @@
 module.exports = function() {
     Creep.prototype.harvestEnergy = function(whenFull) {
         if(this.spawning) return;
-        if(!this.memory.working && this.carry.energy < this.carryCapacity) {
+        if(!this.memory.working && _.sum(this.carry) < this.carryCapacity) {
             let closestEnergy = this.pos.findClosestByPath(FIND_DROPPED_ENERGY, { maxOps: 500 });
             if(closestEnergy == undefined) {
                 let closestSource = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE, { maxOps: 500 });
@@ -14,6 +14,13 @@ module.exports = function() {
                     } else if(err != OK) {
                         console.log(err);
                     }
+                } else {
+                     this.memory.working = true;
+                    if(whenFull != undefined && typeof whenFull == 'function') {
+                        whenFull(this);
+                    }
+                    if(this.carry.energy == 0)
+                        this.memory.working = false;
                 }
             } else {
                 let err = this.pickup(closestEnergy);
@@ -23,7 +30,6 @@ module.exports = function() {
                     });
                 }
             }
-            
         } else {
             this.memory.working = true;
             if(whenFull != undefined && typeof whenFull == 'function') {
@@ -36,7 +42,7 @@ module.exports = function() {
     
     Creep.prototype.fetchEnergy = function(whenFull) {
         if(this.spawning) return;
-        if(!this.memory.working && this.carry.energy < this.carryCapacity) {
+        if(!this.memory.working && _.sum(this.carry) < this.carryCapacity) {
             if((Memory.currentEnergy >= Memory.maxEnergy * 0.95) || Memory.reachedMinUnits) {
                 var closestSpawn = this.pos.findClosestByRange(FIND_STRUCTURES, {
                    filter: (s) =>  (s.structureType == STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0) || ((s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy == s.energyCapacity)
@@ -48,10 +54,10 @@ module.exports = function() {
                             });
                     }
                 } else {
-                    this.harvestEnergy();
+                    this.harvestEnergy(whenFull);
                 }
             } else {
-                this.harvestEnergy();
+                this.harvestEnergy(whenFull);
             }
         } else {
             this.memory.working = true;

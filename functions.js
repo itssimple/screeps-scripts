@@ -2,13 +2,14 @@ require('prototype.spawn')();
 require('prototype.creep')();
 require('prototype.tower')();
 
-var harvester =    require('role.harvester');
-var builder   =    require('role.builder');
-var upgrader  =    require('role.upgrader');
-var repairer =     require('role.repairer');
-var wallRepairer = require('role.wallRepairer');
+var harvester =     require('role.harvester');
+var builder   =     require('role.builder');
+var upgrader  =     require('role.upgrader');
+var repairer =      require('role.repairer');
+var wallRepairer =  require('role.wallRepairer');
+var scout =         require('role.scout');
 
-var taskPreparer = require('task.preparer');
+var taskPreparer =  require('task.preparer');
 
 module.exports = {
     clearMemory: function() {
@@ -98,8 +99,6 @@ module.exports = {
             minWallRepairers = 1;
             reachedMinWallRepairers = true;
         }
-        
-        
         
         let currentHarvesters =    _.sum(Game.creeps, (c) => c.memory.role == 'harvester');
         let currentUpgraders =     _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');

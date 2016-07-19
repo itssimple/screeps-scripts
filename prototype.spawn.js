@@ -22,4 +22,19 @@ module.exports = function(){
         
         return this.createCreep(body, undefined, options);
     };
+
+    StructureSpawn.prototype.createScout = function (energyToSpend) {
+        var partsToCreate = Math.floor(energyToSpend / 50);
+        if (partsToCreate > 5)
+            partsToCreate = 5;
+        var body = [];
+       
+        for (let i = 0; i < partsToCreate; i++) {
+            body.push(MOVE);
+        }
+        
+        var options = { role: 'scout' };
+        
+        return this.createCreep(body, undefined, options);
+    };
 };
