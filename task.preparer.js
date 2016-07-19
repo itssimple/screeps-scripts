@@ -39,6 +39,12 @@ module.exports = {
 		function checkSource(_room) {
 			let sources = _room.find(FIND_SOURCES);
 			for (let s in sources) {
+				let source = sources[s];
+				if (source.pos.findInRange(FIND_HOSTILE_STRUCTURES, 5).length > 0 ||
+					source.pos.findInRange(FIND_HOSTILE_CREEPS, 5).length > 0 ||
+					source.pos.findInRange(FIND_HOSTILE_SPAWNS, 5).length > 0 ||
+					source.pos.findInRange(FIND_HOSTILE_CONSTRUCTION_SITES, 5).length > 0)
+					continue;
 				if (Memory.tasks.sources.indexOf(sources[s].id) == -1) {
 					Memory.tasks.sources.push(sources[s].id);
 				}
@@ -50,7 +56,11 @@ module.exports = {
 			let sites = Game.constructionSites;
 			for (let s in sites) {
 				if (Memory.tasks.build.indexOf(sites[s].id) == -1) {
-					Memory.tasks.build.push(sites[s].id);
+					if (sites[s].structureType == STRUCTURE_EXTENSION) {
+						Memory.tasks.build.unshift(sites[s].id);
+					} else {
+						Memory.tasks.build.push(sites[s].id);
+					}	
 				}
 			}
 

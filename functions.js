@@ -13,30 +13,39 @@ var taskPreparer =  require('task.preparer');
 
 module.exports = {
 	clearMemory: function () {
-		for (let id in Memory.tasks.build) {
-			if (Game.getObjectById(Memory.tasks.build[id]) == undefined) {
-				delete Memory.tasks.build[id];
+		if (Memory.tasks != undefined) {
+			if (Memory.tasks.build != undefined) {
+				for (let id in Memory.tasks.build) {
+					if (Game.getObjectById(Memory.tasks.build[id]) == undefined) {
+						delete Memory.tasks.build[id];
+					}
+				}
 			}
-		}
 
-		for (let id in Memory.tasks.repair) {
-			if (Game.getObjectById(Memory.tasks.repair[id]) == undefined) {
-				delete Memory.tasks.repair[id];
+			if (Memory.tasks.repair != undefined) {
+				for (let id in Memory.tasks.repair) {
+					if (Game.getObjectById(Memory.tasks.repair[id]) == undefined) {
+						delete Memory.tasks.repair[id];
+					}
+				}
 			}
-		}
 
-		for (let id in Memory.tasks.sources) {
-			if (Game.getObjectById(Memory.tasks.sources[id]) == undefined) {
-				delete Memory.tasks.sources[id];
+			if (Memory.tasks.sources != undefined) {
+				for (let id in Memory.tasks.sources) {
+					if (Game.getObjectById(Memory.tasks.sources[id]) == undefined) {
+						delete Memory.tasks.sources[id];
+					}
+				}
 			}
-		}
 
-		for (let id in Memory.tasks.wallRepair) {
-			if (Game.getObjectById(Memory.tasks.wallRepair[id]) == undefined) {
-				delete Memory.tasks.wallRepair[id];
+			if (Memory.tasks.wallRepair != undefined) {
+				for (let id in Memory.tasks.wallRepair) {
+					if (Game.getObjectById(Memory.tasks.wallRepair[id]) == undefined) {
+						delete Memory.tasks.wallRepair[id];
+					}
+				}
 			}
 		}
-		
 		for(let name in Memory.creeps) {
 			if(Game.creeps[name] == undefined) {
 				delete Memory.creeps[name];
@@ -78,6 +87,56 @@ module.exports = {
 	},
 	prepareTasks: function() {
 		taskPreparer.run();
+	},
+	buildFirstRoads: function () {
+		if (Memory.hasRun == undefined)
+		{
+			let spawn = Game.spawns[Object.keys(Game.spawns)[0]];
+			let sources = spawn.room.find(FIND_SOURCES);
+			for (let s in sources) {
+				let source = sources[s];
+				if (source.pos.findInRange(FIND_HOSTILE_STRUCTURES, 5).length > 0 ||
+					source.pos.findInRange(FIND_HOSTILE_CREEPS, 5).length > 0 ||
+					source.pos.findInRange(FIND_HOSTILE_SPAWNS, 5).length > 0 ||
+					source.pos.findInRange(FIND_HOSTILE_CONSTRUCTION_SITES, 5).length > 0)
+					continue;
+				let path = spawn.pos.findPathTo(source, { ignoreCreeps: true, ignoreRoads: true });
+				let pathLen = path.length;
+				for (let i = 0; i < pathLen; i++) {
+					let step = path[i];
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x, step.y)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x, step.y, STRUCTURE_ROAD);
+					}
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x - 1, step.y)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x - 1, step.y, STRUCTURE_ROAD);
+					}
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x - 1, step.y - 1)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x - 1, step.y - 1, STRUCTURE_ROAD);
+					}
+
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x, step.y - 1)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x, step.y - 1, STRUCTURE_ROAD);
+					}
+
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x - 1, step.y + 1)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x - 1, step.y + 1, STRUCTURE_ROAD);
+					}
+
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x + 1, step.y)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x + 1, step.y, STRUCTURE_ROAD);
+					}
+
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x + 1, step.y - 1)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x + 1, step.y - 1, STRUCTURE_ROAD);
+					}
+
+					if (spawn.room.lookForAt(LOOK_TERRAIN, step.x + 1, step.y + 1)[0] == 'swamp') {
+						spawn.room.createConstructionSite(step.x + 1, step.y + 1, STRUCTURE_ROAD);
+					}
+				}
+			}
+			Memory.hasRun = true;
+		}	
 	},
 	createCreeps: function() {
 		Memory.maxEnergy = 0;
