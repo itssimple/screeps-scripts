@@ -35,7 +35,7 @@ module.exports = {
                     } else if(err == OK) {
                         console.log(c.name + ' (' + c.memory.role + ') building on a ' + target.structureType + ': (' + target.progress + ' / ' + target.progressTotal + ') ' + Math.round((target.progress / target.progressTotal) * 100, 2) + '%');
                     } else {
-                        console.log(c.name + ' (' + c.memory.role + ') error: build ' + err);
+                        //console.log(c.name + ' (' + c.memory.role + ') error: build ' + err);
                     }
                     break;
                 }

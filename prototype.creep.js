@@ -7,8 +7,18 @@ module.exports = function() {
                 if (closestEnergy.pos.x == 0 || closestEnergy.pos.x == 49 || closestEnergy.pos.y == 0 || closestEnergy.pos.y == 49)
                     closestEnergy = undefined;    
             }
-            if(closestEnergy == undefined) {
-                let closestSource = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE, { maxOps: 500 });
+            if (closestEnergy == undefined) {
+                let closestSource = undefined;
+                if (Memory.tasks.sources != undefined && Memory.tasks.sources.length > 0) {
+                    if (this.memory.harvestTarget == undefined) {
+                        this.memory.harvestTarget = Memory.tasks.sources.shift();
+                    }    
+                    closestSource = Game.getObjectById(this.memory.harvestTarget);
+                    if (closestSource.energy == 0 || closestSource == undefined) {
+                        closestSource = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE, { maxOps: 500 });        
+                    }
+                }
+
                 if(closestSource != undefined) {
                     let err = this.harvest(closestSource);
                     if(err == ERR_NOT_IN_RANGE) {

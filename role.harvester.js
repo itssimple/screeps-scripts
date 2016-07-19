@@ -38,7 +38,7 @@ module.exports = {
                 
                } else {
                    closest = c.pos.findClosestByPath(FIND_STRUCTURES, {
-                       filter: (s) => (s.structureType == STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] < s.storeCapacity),
+                       filter: (s) => ((s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURE_CONTAINER) && s.store[RESOURCE_ENERGY] < s.storeCapacity),
                        maxOps: 500
                    });
                    if (closest != undefined) {
