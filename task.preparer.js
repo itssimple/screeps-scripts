@@ -46,10 +46,30 @@ module.exports = {
 		}
 
 		function checkConstruction(_room) {
-			let sites = _room.find(FIND_MY_CONSTRUCTION_SITES);
+			//let sites = _room.find(FIND_MY_CONSTRUCTION_SITES);
+			let sites = Game.constructionSites;
 			for (let s in sites) {
 				if (Memory.tasks.build.indexOf(sites[s].id) == -1) {
 					Memory.tasks.build.push(sites[s].id);
+				}
+			}
+
+			let repair = _room.find(FIND_STRUCTURES, {
+                filter: (s) => s.structureType != STRUCTURE_WALL && s.hits < (s.hitsMax * 0.5)
+            });
+			for (let s in repair) {
+				if (Memory.tasks.repair.indexOf(repair[s].id) == -1) {
+					Memory.tasks.repair.push(repair[s].id);
+				}
+			}
+
+			let structures = _room.find(FIND_STRUCTURES, {
+                filter: (s) => s.structureType == STRUCTURE_WALL && s.hits < s.hitsMax
+            });
+
+			for (let s in structures) {
+				if (Memory.tasks.wallRepair.indexOf(structures[s].id) == -1) {
+					Memory.tasks.wallRepair.push(structures[s].id);
 				}
 			}
 		}
@@ -61,6 +81,8 @@ module.exports = {
 			if (Memory.tasks.sources == undefined) Memory.tasks.sources = [];
 			if (Memory.tasks.upgrade == undefined) Memory.tasks.upgrade = [];
 			if (Memory.tasks.claim == undefined) Memory.tasks.claim = [];
+			if (Memory.tasks.repair == undefined) Memory.tasks.repair = [];
+			if (Memory.tasks.wallRepair == undefined) Memory.tasks.wallRepair = [];
 		}
 	}
 };
