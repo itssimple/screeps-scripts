@@ -16,7 +16,7 @@ module.exports = {
 		if (Memory.tasks != undefined) {
 			if (Memory.tasks.build != undefined) {
 				for (let id in Memory.tasks.build) {
-					if (Game.getObjectById(Memory.tasks.build[id]) == undefined) {
+					if (Memory.tasks.build[id] == null || Game.getObjectById(Memory.tasks.build[id]) == undefined) {
 						delete Memory.tasks.build[id];
 					}
 				}
@@ -24,7 +24,7 @@ module.exports = {
 
 			if (Memory.tasks.repair != undefined) {
 				for (let id in Memory.tasks.repair) {
-					if (Game.getObjectById(Memory.tasks.repair[id]) == undefined) {
+					if (Memory.tasks.repair[id] == null || Game.getObjectById(Memory.tasks.repair[id]) == undefined) {
 						delete Memory.tasks.repair[id];
 					}
 				}
@@ -32,7 +32,7 @@ module.exports = {
 
 			if (Memory.tasks.sources != undefined) {
 				for (let id in Memory.tasks.sources) {
-					if (Game.getObjectById(Memory.tasks.sources[id]) == undefined) {
+					if (Memory.tasks.sources[id] == null || Game.getObjectById(Memory.tasks.sources[id]) == undefined) {
 						delete Memory.tasks.sources[id];
 					}
 				}
@@ -40,7 +40,7 @@ module.exports = {
 
 			if (Memory.tasks.wallRepair != undefined) {
 				for (let id in Memory.tasks.wallRepair) {
-					if (Game.getObjectById(Memory.tasks.wallRepair[id]) == undefined) {
+					if (Memory.tasks.wallRepair[id] == null || Game.getObjectById(Memory.tasks.wallRepair[id]) == undefined) {
 						delete Memory.tasks.wallRepair[id];
 					}
 				}
